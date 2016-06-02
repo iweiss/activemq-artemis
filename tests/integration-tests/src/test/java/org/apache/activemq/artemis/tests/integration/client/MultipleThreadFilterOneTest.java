@@ -173,6 +173,7 @@ public class MultipleThreadFilterOneTest extends ActiveMQTestBase {
          }
          catch (Throwable e) {
             e.printStackTrace();
+            log.error(e);
             errors.incrementAndGet();
          }
          finally {
