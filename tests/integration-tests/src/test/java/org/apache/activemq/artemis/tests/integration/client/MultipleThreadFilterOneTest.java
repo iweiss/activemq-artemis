@@ -17,7 +17,9 @@
 package org.apache.activemq.artemis.tests.integration.client;
 
 import org.apache.activemq.artemis.api.core.ActiveMQException;
+import org.apache.activemq.artemis.core.server.Queue;
 import org.apache.activemq.artemis.tests.util.ActiveMQTestBase;
+import org.jboss.logging.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -45,6 +47,8 @@ public class MultipleThreadFilterOneTest extends ActiveMQTestBase {
    // Attributes ----------------------------------------------------
 
    // Static --------------------------------------------------------
+
+   private static Logger log = Logger.getLogger(MultipleThreadFilterOneTest.class);
 
    final String ADDRESS = "ADDRESS";
 
@@ -157,7 +161,8 @@ public class MultipleThreadFilterOneTest extends ActiveMQTestBase {
                msg.acknowledge();
 
                if (i % 500 == 0) {
-                  System.out.println("Consumed " + i);
+//                  System.out.println("Consumed " + i);
+                  log.infof("Consumed %d", i);
                   consumerSession.commit();
                }
             }
@@ -269,7 +274,9 @@ public class MultipleThreadFilterOneTest extends ActiveMQTestBase {
             }
          }
 
-         waitForNotPaging(server.locateQueue(new SimpleString("Q1")));
+         Queue queue = server.locateQueue(new SimpleString("Q1"));
+         queue.getPageSubscription().getPagingStore().getCursorProvider().cleanup();
+         waitForNotPaging(queue);
 
       }
       finally {
